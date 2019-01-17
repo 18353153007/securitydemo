@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+<sec:http pattern="static/**" security="none"/>
+<sec:http auto-config="false" entry-point-ref="casAuthenticationEntryPoint">
+    <sec:intercept-url pattern="/lcc/test1" access="hasRole('ROLE_ADMIN')"/>
+    <sec:intercept-url pattern="/cas/test2" access="hasRole('ROLE_TEST')"/>
+    <sec:custom-filter ref="casAuthenticationFilter" position="CAS_FILTER"/>
+    <!--<sec:custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>-->
+    <sec:csrf disabled="true"/>
+</sec:http>
+    <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
+        <!--当前服务访问地址+filterProcessesUrl-->
+        <property name="service" value="http://localhost:8087/login/cas"/>
+    </bean>
+    <bean id="casAuthenticationEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+        <property name="serviceProperties" ref="serviceProperties"/>
+        <property name="loginUrl" value="http://localhost:8080/cas/login"/>
+    </bean>
+
+    <bean id="ticketValidator" class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+        <constructor-arg value="http://localhost:8080/cas"/>
+    </bean>
+
+    <bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+        <property name="serviceProperties" ref="serviceProperties"/>
+        <property name="userDetailsService" ref="myUserService"/>
+        <property name="ticketValidator" ref="ticketValidator"/>
+        <property name="key" value="an_id_for_this_auth_provider_only2"/>
+    </bean>
+
+    <sec:authentication-manager id="authenticationManager">
+        <sec:authentication-provider ref="casAuthenticationProvider"/>
+    </sec:authentication-manager>
+
+    <!--<bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/>-->
+
+    <bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="serviceProperties" ref="serviceProperties"/>
+        <!--默认为/cas/login-->
+        <!--<property name="filterProcessesUrl" value="/cas/loginSuccess2"/>-->
+    </bean>
+</beans>

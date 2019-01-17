@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Appboard - Admin Template with Angularjs">
+    <meta name="keywords" content="appboard, webapp, admin, dashboard, template, ui">
+    <meta name="author" content="solutionportal">
+    <!-- <base href="/"> -->
+
+    <title>Appboard - Admin Template</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'/>
+
+    <!-- Icons -->
+    <link rel="stylesheet" type="text/css" href="http://www.jq22.com/jquery/font-awesome.4.6.0.css"/>
+
+    <!-- Set this in dist folder in index.html file -->
+    <link rel="stylesheet" type="text/css" href="http://www.jq22.com/jquery/bootstrap-3.3.4.css"/>
+    <link rel="stylesheet" th:href="@{{path}/styles/main.min.css(path=${contextPath})}"/>
+
+    <!-- Match Media polyfill for IE9 -->
+    <!--[if IE 9]><!-->
+    <script type="application/javascript" th:src="@{{path}/scripts/ie/matchMedia.js(path=${contextPath})}"></script>
+    <!--<![endif]-->
+
+</head>
+
+<body ng-app="app" id="app" class="app {{themeActive}}" custom-page ng-controller="AppCtrl">
+
+<div class="page page-auth clearfix">
+
+    <div class="auth-container">
+        <!-- site logo -->
+        <h1 class="site-logo h2 mb15"><a href="/"><span>App</span>&nbsp;Board</a></h1>
+        <h3 class="text-normal h4 text-center">Sign in to your account</h3>
+
+        <div class="form-container">
+            <form class="form-horizontal" form action="/lcc/test3"  method="post">>
+                <div class="form-group form-group-lg">
+                    <input name="username" class="form-control" type="text" placeholder="用户名" value="">
+                </div>
+
+                <div class="form-group form-group-lg">
+                    <input name="password" class="form-control" type="password" placeholder="密码">
+                </div>
+                <div class="clearfix"><a href="#/pages/forget-pass" class="right small">忘记密码</a>
+                </div>
+                <div class="clearfix mb15">
+                    <button type="submit" onclick="hello.html" class="btn btn-lg btn-w120 btn-primary text-uppercase">登录</button>
+                    <div class="ui-checkbox ui-checkbox-primary mt15 right">
+                        <label>
+                            <input type="checkbox" id="keep-login" name="remember-me">
+                            <span>Remember me</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="clearfix text-center">
+                    <p>Don't have an account? <a href="#/pages/register">Register Now</a>
+                    </p>
+                </div>
+            </form>
+            <div th:if="${param.error}">
+                <span style="color: red">用户名或密码错误</span>
+            </div>
+            <div th:if="${param.logout}">
+                <span style="color: red">您已注销成功</span>
+            </div>
+        </div>
+
+    </div>
+    <!-- ##end auth-wrap -->
+</div>
+<!-- Set this in dist index.html -->
+<script type="application/javascript"  th:src="@{{path}/scripts/vendors.js(path=${contextPath})}"></script>
+<script type="application/javascript" th:src="@{{path}/scripts/plugins.js(path=${contextPath})}"></script>
+<script type="application/javascript" th:src="@{{path}/scripts/app.js(path=${contextPath})}"></script>
+
+<!-- !End -->
+</body>
+
+</html>

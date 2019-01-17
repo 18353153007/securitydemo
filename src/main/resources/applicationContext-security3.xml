@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+    <!--基于表单认证-->
+    <sec:http auto-config="true">
+        <sec:csrf disabled="true"/>
+
+        <sec:intercept-url pattern="/lcc/test1" access="hasRole('ROLE_ADMIN')"/>
+        <sec:intercept-url pattern="/lcc/test2" access="hasRole('ROLE_ADMIN')"/>
+        <sec:intercept-url pattern="/lcc/login" access="permitAll()"/>
+        <sec:intercept-url pattern="static/*" access="permitAll()"/>
+        <sec:form-login login-page="/lcc/login"  login-processing-url="/lcc/test3" authentication-failure-url="/login?error"
+        default-target-url="/hello"/>
+    </sec:http>
+
+    <sec:authentication-manager id="authenticationManager" >
+        <sec:authentication-provider user-service-ref="myUserService">
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+
+
+
+</beans>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+    <sec:http auto-config="true">
+        <sec:csrf disabled="true"/>
+
+        <sec:intercept-url pattern="/lcc/test1" access="hasRole('ROLE_ADMIN')"/>
+        <sec:intercept-url pattern="static/*" access="permitAll()"/>
+        <sec:intercept-url pattern="/lcc/login" access="permitAll()"/>
+        <!--默认form-login和基本认证都支持的。如果不配置form-login的登录页面，则使用springsecurity的默认登录页面-->
+        <!--请求过过滤之后如果匹配拦截url且没有需要的权限，则需要基本认证或者form-login认证。这个主要是根据header里的类型决定使用form-login还是basic认证-->
+        <!--我个人认为如果请求头里有Authorization属性则走basic认证，没有则走form-login认证（一般浏览器访问的时候是form-login访问，basic是rest接口时候）-->
+        <!--<sec:form-login/>-->
+        <sec:form-login login-page="/lcc/login"  login-processing-url="/lcc/test2" authentication-failure-url="/login?error"
+        default-target-url="/hello"/>
+        <sec:http-basic/>
+    </sec:http>
+    <sec:authentication-manager id="authenticationManager" >
+        <sec:authentication-provider>
+            <sec:user-service>
+                <sec:user name="user" authorities="ROLE_ADMIN" password="{noop}123456"></sec:user>
+            </sec:user-service>
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+
+    <bean id="authenticationEntryPoint"
+          class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+        <property name="realmName" value="Name Of Your Realm"/>
+    </bean>
+
+    <bean id="basicAuthenticationFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+        <constructor-arg ref="authenticationManager"/>
+        <constructor-arg ref="authenticationEntryPoint"/>
+    </bean>
+
+</beans>
