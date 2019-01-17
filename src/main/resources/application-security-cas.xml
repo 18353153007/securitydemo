@@ -10,7 +10,8 @@
     <sec:intercept-url pattern="/lcc/test1" access="hasRole('ROLE_ADMIN')"/>
     <sec:intercept-url pattern="/cas/test2" access="hasRole('ROLE_TEST')"/>
     <sec:custom-filter ref="casAuthenticationFilter" position="CAS_FILTER"/>
-    <!--<sec:custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>-->
+    <sec:custom-filter ref="singleLogoutFilter" before="CAS_FILTER"/>
+    <sec:custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER"/>
     <sec:csrf disabled="true"/>
 </sec:http>
     <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
@@ -37,7 +38,15 @@
         <sec:authentication-provider ref="casAuthenticationProvider"/>
     </sec:authentication-manager>
 
-    <!--<bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/>-->
+    <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/>
+
+    <bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg value="http://localhost:8080/cas/logout?service=http://localhost:8087/lcc/test1"/>
+        <constructor-arg >
+            <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+        </constructor-arg>
+        <property name="filterProcessesUrl" value="/logout/cas"/>
+    </bean>
 
     <bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
